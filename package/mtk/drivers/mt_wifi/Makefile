@@ -281,7 +281,7 @@ PKG_KCONFIG:= \
 	DFS_SLAVE_SUPPORT \
 
 PKG_CONFIG_DEPENDS:=$(foreach c, $(PKG_KCONFIG),$(if $(CONFIG_MTK_$c),CONFIG_$(c)))
-PKG_PREPARED_DEPENDS:=CONFIG_MTK_MT7986_NEW_FW CONFIG_MTK_MT7981_NEW_FW CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7661 CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7672 CONFIG_MTK_FW_NEW_API_PATCH
+PKG_PREPARED_DEPENDS:=CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7661 CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7672 CONFIG_MTK_NEW_FW_API_PATCH
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -301,17 +301,6 @@ endef
 define KernelPackage/mt_wifi/config
 	source "$(SOURCE)/config.in"
 endef
-
-define FIXUP_NEW_MCU_FW_API
-		echo "Fixup new mcu fw API"; \
-		patch -p1 -d $(PKG_BUILD_DIR) < ./files/fix-new-mcu-fw-api.patch
-	@if [ "$$(CONFIG_MTK_MT7986_NEW_FW)" = "y" ]; then \
-		echo "Fixup eeprom reading API"; \
-		patch -p1 -d $(PKG_BUILD_DIR) < ./files/eeprom-flash-api.patch; \
-	fi
-endef
-
-Hooks/Prepare/Post := FIXUP_NEW_MCU_FW_API
 
 define MT_WIFI_SRC_PATCH
 	@if [ "$$(CONFIG_MTK_FW_NEW_API_PATCH)" = "y" ]; then \
